@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { InspectionApiService } from 'src/app/services/inspection-api.service';
+import { ApiService } from 'src/app/services/api.service';
 
 @Component({
   selector: 'app-show-inspection',
@@ -16,7 +16,7 @@ export class ShowInspectionComponent implements OnInit {
   //Map to display associate with foreign keys
   inspectionTypesMap:Map<number, string> = new Map();
 
-  constructor(private service: InspectionApiService) { }
+  constructor(private service: ApiService) { }
 
   ngOnInit(): void {
     this.inspectionList$ = this.service.getInspectionList();
