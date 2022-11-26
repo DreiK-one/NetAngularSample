@@ -9,23 +9,23 @@ import { Observable } from 'rxjs';
 })
 export class InspectionService {
 
-  inspectionUrl: string = 'inspection'
+  private inspectionUrl: string = 'inspections'
 
-  constructor(private service: ApiService) { }
+  constructor(private apiService: ApiService) { }
 
   getAllInspections(): Observable<Inspection[]>{
-    return this.service.get(this.inspectionUrl)
+    return this.apiService.get(this.inspectionUrl)
   }
 
   createInspection(data: Inspection){
-    return this.service.post(this.inspectionUrl, data)
+    return this.apiService.post(this.inspectionUrl, data)
   }
 
   updateInspection(id: string, data: Inspection){
-    return this.service.put(this.inspectionUrl, id, data)
+    return this.apiService.put(this.inspectionUrl, id, data)
   }
 
   deleteInspection(id: string){
-    return this.service.delete(this.inspectionUrl, id)
+    return this.apiService.delete(this.inspectionUrl, id)
   }
 }

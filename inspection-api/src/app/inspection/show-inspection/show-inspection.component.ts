@@ -1,6 +1,10 @@
+import { Inspection } from 'src/app/models/inspection';
+import { InspectionTypesService } from './../../services/inspection-types-service/inspection-types.service';
+import { InspectionType } from './../../models/inspection-type';
+import { InspectionService } from './../../services/inspection-service/inspection.service';
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiService } from 'src/app/services/api.service';
+
 
 @Component({
   selector: 'app-show-inspection',
@@ -9,17 +13,45 @@ import { ApiService } from 'src/app/services/api.service';
 })
 export class ShowInspectionComponent implements OnInit {
 
-  inspectionList$!: Observable<any[]>;
-  inspectionTypesList$!: Observable<any[]>;
-  inspectionTypeList: any = [];
+  inspectionList$!: Observable<Inspection[]>;
+  inspectionTypesList$!: Observable<InspectionType[]>;
+  inspectionTypesList: any = [];
 
   //Map to display associate with foreign keys
   inspectionTypesMap:Map<number, string> = new Map();
 
-  constructor(private service: ApiService) { }
+  constructor(private inspectionService: InspectionService, 
+    private inspectionTypesService: InspectionTypesService) { }
+
+  //Variables (properties)
+  modalTitle: string = '';
+  activateAddEditInspectionComponent: boolean = false;
+  inspection: Inspection | undefined;
 
   ngOnInit(): void {
-    this.inspectionList$ = this.service.getInspectionList();
+    this.inspectionList$ = this.inspectionService.getAllInspections();
+    this.inspectionTypesList$ = this.inspectionTypesService.getAllInspectionTypes();
+    this.refreshInspectionTypesList();
   }
 
+  refreshInspectionTypesList(){
+    this.inspectionTypesService.getAllInspectionTypes().subscribe(data =>{
+      this.inspectionTypesList = data;
+        for (let i = 0; i < data.length; i++) {
+          this.inspectionTypesMap.set(this.inspectionTypesList[i].id, 
+            this.inspectionTypesList[i].inspectionName);
+        }
+      })
+    }
+
+    modalAdd(){
+      this.inspection = {
+        id: 0,
+        status: '',
+        comments: '',
+        inspectionTypeId: 0
+      }
+      this.activateAddEditInspectionComponent = true;
+      this.modalTitle = "Add Inspection";
+    }
 }

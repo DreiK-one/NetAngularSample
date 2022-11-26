@@ -10,21 +10,21 @@ export class StatusService {
 
   statusUrl: string = 'status'
 
-  constructor(private service: ApiService) { }
+  private constructor(private apiService: ApiService) { }
 
   getAllStatuses(): Observable<Status[]>{
-    return this.service.get(this.statusUrl)
+    return this.apiService.get(this.statusUrl)
   }
 
   createStatus(data: Status){
-    return this.service.post(this.statusUrl, data)
+    return this.apiService.post(this.statusUrl, data)
   }
 
   updateStatus(id: string, data: Status){
-    return this.service.put(this.statusUrl, id, data)
+    return this.apiService.put(this.statusUrl, id, data)
   }
 
   deleteStatus(id: string){
-    return this.service.delete(this.statusUrl, id)
+    return this.apiService.delete(this.statusUrl, id)
   }
 }
