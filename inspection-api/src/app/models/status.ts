@@ -1,4 +1,4 @@
-export interface Inspection{
+export interface Status{
     id: number,
     statusOption: string
 }
