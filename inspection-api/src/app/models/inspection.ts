@@ -1,5 +1,5 @@
 export interface Inspection{
-    id: number,
+    id?: number,
     status: string,
     comments: string,
     inspectionTypeId: number 

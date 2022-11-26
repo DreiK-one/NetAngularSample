@@ -26,7 +26,7 @@ export class ShowInspectionComponent implements OnInit {
   //Variables (properties)
   modalTitle: string = '';
   activateAddEditInspectionComponent: boolean = false;
-  inspection: Inspection | undefined;
+  inspection!: Inspection;
 
   ngOnInit(): void {
     this.inspectionList$ = this.inspectionService.getAllInspections();
@@ -51,7 +51,12 @@ export class ShowInspectionComponent implements OnInit {
         comments: '',
         inspectionTypeId: 0
       }
-      this.activateAddEditInspectionComponent = true;
       this.modalTitle = "Add Inspection";
+      this.activateAddEditInspectionComponent = true;
+    }
+
+    modalClose(){
+      this.activateAddEditInspectionComponent = false;
+      this.inspectionList$ = this.inspectionService.getAllInspections();
     }
 }
