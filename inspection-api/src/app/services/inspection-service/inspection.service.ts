@@ -21,11 +21,11 @@ export class InspectionService {
     return this.apiService.post(this.inspectionUrl, data)
   }
 
-  updateInspection(id: string, data: Inspection){
+  updateInspection(id: number, data: Inspection){
     return this.apiService.put(this.inspectionUrl, id, data)
   }
 
-  deleteInspection(id: string){
+  deleteInspection(id: number){
     return this.apiService.delete(this.inspectionUrl, id)
   }
 }

@@ -47,7 +47,7 @@ export class AddEditInspectionComponent implements OnInit {
       inspectionTypeId: this.inspectionTypeId
     }
 
-    this.inspectionService.createInspection(inspection).subscribe(result =>{
+    this.inspectionService.createInspection(inspection).subscribe(() =>{
       let closeModalBtn = document.getElementById('add-edit-close-modal');
       if(closeModalBtn)
         closeModalBtn.click();
@@ -66,7 +66,28 @@ export class AddEditInspectionComponent implements OnInit {
   }
 
   updateInspection(){
+    let inspection:Inspection = {
+      id: this.id,
+      status: this.status,
+      comments: this.comments,
+      inspectionTypeId: this.inspectionTypeId
+    }
 
+    this.inspectionService.updateInspection(<number>inspection.id, inspection).subscribe(() =>{
+      let closeModalBtn = document.getElementById('add-edit-close-modal');
+      if(closeModalBtn)
+        closeModalBtn.click();
+    })
+
+    let showUpdateSuccess = document.getElementById('update-success-alert');
+    if (showUpdateSuccess) {
+      showUpdateSuccess.style.display = 'block';
+    }
+
+    setTimeout(() =>{
+      if (showUpdateSuccess) {
+        showUpdateSuccess.style.display = 'none';
+      }
+    }, 4000);
   }
-
 }

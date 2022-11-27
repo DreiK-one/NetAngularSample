@@ -20,11 +20,11 @@ export class InspectionTypesService {
     return this.apiService.post(this.inspectionTypeUrl, data)
   }
 
-  updateInspectionType(id: string, data: InspectionType){
+  updateInspectionType(id: number, data: InspectionType){
     return this.apiService.put(this.inspectionTypeUrl, id, data)
   }
 
-  deleteInspectionType(id: string){
+  deleteInspectionType(id: number){
     return this.apiService.delete(this.inspectionTypeUrl, id)
   }
 }

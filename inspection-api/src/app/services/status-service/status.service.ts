@@ -20,11 +20,11 @@ export class StatusService {
     return this.apiService.post(this.statusUrl, data)
   }
 
-  updateStatus(id: string, data: Status){
+  updateStatus(id: number, data: Status){
     return this.apiService.put(this.statusUrl, id, data)
   }
 
-  deleteStatus(id: string){
+  deleteStatus(id: number){
     return this.apiService.delete(this.statusUrl, id)
   }
 }
