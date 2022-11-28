@@ -21,14 +21,13 @@ namespace InspectionAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Inspections
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inspection>>> GetInspections()
         {
             return await _context.Inspections.ToListAsync();
         }
 
-        // GET: api/Inspections/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Inspection>> GetInspection(int id)
         {
@@ -42,8 +41,7 @@ namespace InspectionAPI.Controllers
             return inspection;
         }
 
-        // PUT: api/Inspections/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInspection(int id, Inspection inspection)
         {
@@ -73,8 +71,7 @@ namespace InspectionAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/Inspections
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
         [HttpPost]
         public async Task<ActionResult<Inspection>> PostInspection(Inspection inspection)
         {
@@ -84,7 +81,7 @@ namespace InspectionAPI.Controllers
             return CreatedAtAction("GetInspection", new { id = inspection.Id }, inspection);
         }
 
-        // DELETE: api/Inspections/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInspection(int id)
         {
@@ -99,6 +96,7 @@ namespace InspectionAPI.Controllers
 
             return NoContent();
         }
+
 
         private bool InspectionExists(int id)
         {

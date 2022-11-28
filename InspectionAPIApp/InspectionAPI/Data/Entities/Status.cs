@@ -2,10 +2,8 @@
 
 namespace InspectionAPI.Data.Entities
 {
-    public class Status
+    public class Status : BaseEntity
     {
-        public int Id { get; set; }
-
         [StringLength(20)]
         public string StatusOption { get; set; } = string.Empty;
     }
