@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InspectionAPI.Data;
 using InspectionAPI.Data.Entities;
+using InspectionAPI.Core.Interfaces;
 
 namespace InspectionAPI.Controllers
 {
@@ -14,11 +9,11 @@ namespace InspectionAPI.Controllers
     [ApiController]
     public class StatusController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IStatusService _statusService;
 
-        public StatusController(DataContext context)
+        public StatusController(IStatusService statusService)
         {
-            _context = context;
+            _statusService = statusService;
         }
 
 

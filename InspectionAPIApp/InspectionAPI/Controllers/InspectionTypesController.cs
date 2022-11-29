@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using InspectionAPI.Data;
 using InspectionAPI.Data.Entities;
+using InspectionAPI.Core.Interfaces;
 
 namespace InspectionAPI.Controllers
 {
@@ -14,13 +9,12 @@ namespace InspectionAPI.Controllers
     [ApiController]
     public class InspectionTypesController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly IInspectionTypeService _inspectionTypeService;
 
-        public InspectionTypesController(DataContext context)
+        public InspectionTypesController(IInspectionTypeService inspectionTypeService)
         {
-            _context = context;
+            _inspectionTypeService = inspectionTypeService;
         }
-
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<InspectionType>>> GetInspectionTypes()

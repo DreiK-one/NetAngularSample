@@ -1,6 +1,12 @@
-﻿namespace InspectionAPI.DataAccess
+﻿using InspectionAPI.Data;
+using InspectionAPI.Data.Entities;
+
+namespace InspectionAPI.DataAccess
 {
-    public class InspectionRepository
+    public class InspectionRepository : BaseRepository<Inspection>
     {
+        public InspectionRepository(DataContext context) : base(context)
+        {
+        }
     }
 }

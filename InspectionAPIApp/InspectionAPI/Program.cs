@@ -1,4 +1,6 @@
+using InspectionAPI.Core.Interfaces;
 using InspectionAPI.Data;
+using InspectionAPI.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -7,6 +9,9 @@ var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IInspectionService, InspectionService>();
+builder.Services.AddScoped<IInspectionTypeService, InspectionTypeService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
