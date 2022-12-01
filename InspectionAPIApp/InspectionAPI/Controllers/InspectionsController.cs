@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using InspectionAPI.Data.Entities;
 using InspectionAPI.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using InspectionAPI.Controllers.Helpers;
+using System.Net;
+
 
 namespace InspectionAPI.Controllers
 {
@@ -16,85 +19,125 @@ namespace InspectionAPI.Controllers
             _inspectionService = inspectionService;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Inspection>>> GetInspections()
+        [HttpGet, AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<Inspection>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), 500)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetInspections()
         {
-            return await _context.Inspections.ToListAsync();
-        }
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Inspection>> GetInspection(int id)
-        {
-            var inspection = await _context.Inspections.FindAsync(id);
-
-            if (inspection == null)
-            {
-                return NotFound();
-            }
-
-            return inspection;
-        }
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutInspection(int id, Inspection inspection)
-        {
-            if (id != inspection.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(inspection).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var inspections = await _inspectionService.GetInspections();
+
+                if (inspections != null)
+                {
+                    return Ok(inspections);
+                }
+
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!InspectionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new ResponseMessage { Message = ex.Message });
             }
-
-            return NoContent();
         }
 
-
-        [HttpPost]
-        public async Task<ActionResult<Inspection>> PostInspection(Inspection inspection)
+        [HttpGet("{id}"), AllowAnonymous]
+        [ProducesResponseType(typeof(Inspection), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), 500)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetInspection(int id)
         {
-            _context.Inspections.Add(inspection);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var inspection = await _inspectionService.GetInspectionById(id);
 
-            return CreatedAtAction("GetInspection", new { id = inspection.Id }, inspection);
+                if (inspection != null)
+                {
+                    return Ok(inspection);
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseMessage { Message = ex.Message });
+            }
         }
 
+        [HttpPut("{id}"), AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PutInspection(int id, Inspection inspection)
+        {
+            try
+            {
+                if (inspection == null || id != inspection.Id)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect request" });
+                }
 
-        [HttpDelete("{id}")]
+                var existingInspection = await _inspectionService.GetInspectionById(id);
+
+                if (existingInspection == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = $"Inspection with id {id} not found" });
+                }
+
+                await _inspectionService.UpdateInspection(inspection);
+
+                return Ok(new ResponseMessage { Message = "Inspection updated" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
+        }
+
+        [HttpPost, AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PostInspection(Inspection inspection)
+        {
+            try
+            {
+                if (inspection == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect request" });
+                }
+
+                await _inspectionService.CreateInspection(inspection);
+
+                return Ok(new ResponseMessage { Message = "Inspection created" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}"), AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteInspection(int id)
         {
-            var inspection = await _context.Inspections.FindAsync(id);
-            if (inspection == null)
+            try
             {
-                return NotFound();
+                var inspection = await _inspectionService.GetInspectionById(id);
+
+                if (inspection == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect id" });
+                }
+
+                await _inspectionService.DeleteInspection(inspection.Id);
+
+                return Ok(new ResponseMessage { Message = "Inspection deleted" });
             }
-
-            _context.Inspections.Remove(inspection);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-
-        private bool InspectionExists(int id)
-        {
-            return _context.Inspections.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
         }
     }
 }

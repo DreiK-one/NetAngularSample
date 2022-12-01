@@ -1,6 +1,7 @@
 ﻿using InspectionAPI.Core.Interfaces;
 using InspectionAPI.Core.Interfaces.Data;
 using InspectionAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace InspectionAPI.Domain.Services
 {
@@ -13,35 +14,90 @@ namespace InspectionAPI.Domain.Services
             _unitOfWork = unitOfWork;
         }
 
-        public InspectionType GetInspectionTypeById(int id)
+        public async Task<InspectionType> GetInspectionTypeById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.InspectionTypes.GetById(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<InspectionType> GetInspectionTypes()
+        public async Task<IEnumerable<InspectionType>> GetInspectionTypes()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.InspectionTypes.GetAll().ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public InspectionType CreateInspectionType(InspectionType inspectionType)
+        public async Task<int> CreateInspectionType(InspectionType inspectionType)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (inspectionType != null)
+                {
+                    await _unitOfWork.InspectionTypes.Add(inspectionType);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public InspectionType UpdateInspectionType(InspectionType inspectionType)
+        public async Task<int> UpdateInspectionType(InspectionType inspectionType)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (inspectionType != null)
+                {
+                    await _unitOfWork.InspectionTypes.Update(inspectionType);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public int DeleteInspectionType(int id)
+        public async Task<int> DeleteInspectionType(int id)
         {
-            throw new NotImplementedException();
-        }
-    
+            try
+            {
+                var status = await _unitOfWork.InspectionTypes.GetById(id);
 
-        private bool InspectionTypeExists(int id)
-        {
-            throw new NotImplementedException();
+                if (status != null)
+                {
+                    await _unitOfWork.InspectionTypes.Remove(status.Id);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }  
     }
 }

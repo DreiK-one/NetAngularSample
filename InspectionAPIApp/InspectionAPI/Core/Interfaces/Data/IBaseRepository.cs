@@ -1,4 +1,5 @@
-﻿using InspectionAPI.Data.Entities;
+﻿using InspectionAPI.Data;
+using InspectionAPI.Data.Entities;
 
 namespace InspectionAPI.Core.Interfaces.Data
 {

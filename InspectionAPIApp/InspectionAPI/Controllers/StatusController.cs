@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using InspectionAPI.Data.Entities;
 using InspectionAPI.Core.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using InspectionAPI.Controllers.Helpers;
+using System.Net;
 
 namespace InspectionAPI.Controllers
 {
@@ -16,87 +18,125 @@ namespace InspectionAPI.Controllers
             _statusService = statusService;
         }
 
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Status>>> GetStatuses()
+        [HttpGet, AllowAnonymous]
+        [ProducesResponseType(typeof(IEnumerable<Status>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), 500)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetStatuses()
         {
-            return await _context.Statuses.ToListAsync();
-        }
-
-
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Status>> GetStatus(int id)
-        {
-            var status = await _context.Statuses.FindAsync(id);
-
-            if (status == null)
-            {
-                return NotFound();
-            }
-
-            return status;
-        }
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutStatus(int id, Status status)
-        {
-            if (id != status.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(status).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                var statuses = await _statusService.GetStatuses();
+
+                if (statuses != null)
+                {
+                    return Ok(statuses);
+                }
+
+                return NoContent();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!StatusExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return StatusCode(500, new ResponseMessage { Message = ex.Message});
             }
-
-            return NoContent();
         }
 
-
-        [HttpPost]
-        public async Task<ActionResult<Status>> PostStatus(Status status)
+        [HttpGet("{id}"), AllowAnonymous]
+        [ProducesResponseType(typeof(Status), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), 500)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        public async Task<IActionResult> GetStatus(int id)
         {
-            _context.Statuses.Add(status);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var status = await _statusService.GetStatusById(id);
 
-            return CreatedAtAction("GetStatus", new { id = status.Id }, status);
+                if (status != null)
+                {
+                    return Ok(status);
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ResponseMessage { Message = ex.Message });
+            }
         }
 
+        [HttpPut("{id}"), AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PutStatus(int id, Status status)
+        {
+            try
+            {
+                if (status == null || id != status.Id)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect request" });
+                }
 
-        [HttpDelete("{id}")]
+                var existingStatus = await _statusService.GetStatusById(id);
+
+                if (existingStatus == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = $"Status with id {id} not found" });
+                }
+
+                await _statusService.UpdateStatus(status);
+
+                return Ok(new ResponseMessage { Message = "Status updated" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
+        }
+
+        [HttpPost, AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> PostStatus(Status status)
+        {
+            try
+            {
+                if (status == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect request" });
+                }
+
+                await _statusService.CreateStatus(status);
+
+                return Ok(new ResponseMessage { Message = "Status created" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
+        }
+
+        [HttpDelete("{id}"), AllowAnonymous]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ResponseMessage), (int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> DeleteStatus(int id)
         {
-            var status = await _context.Statuses.FindAsync(id);
-            if (status == null)
+            try
             {
-                return NotFound();
+                var status = await _statusService.GetStatusById(id);
+
+                if (status == null)
+                {
+                    return BadRequest(new ResponseMessage { Message = "Incorrect id" });
+                }
+
+                await _statusService.DeleteStatus(status.Id);
+
+                return Ok(new ResponseMessage { Message = "Status deleted" });
             }
-
-            _context.Statuses.Remove(status);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-
-        private bool StatusExists(int id)
-        {
-            return _context.Statuses.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return BadRequest(new ResponseMessage { Message = ex.Message });
+            }
         }
     }
 }

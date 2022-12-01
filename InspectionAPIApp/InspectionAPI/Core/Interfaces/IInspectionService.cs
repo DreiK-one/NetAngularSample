@@ -5,10 +5,10 @@ namespace InspectionAPI.Core.Interfaces
 {
     public interface IInspectionService
     {
-        IEnumerable<Inspection> GetInspections();
-        Inspection GetInspectionById(int id);
-        Inspection CreateInspection(Inspection inspection);
-        Inspection UpdateInspection(Inspection inspection);
-        int DeleteInspection(int id);
+        Task<IEnumerable<Inspection>> GetInspections();
+        Task<Inspection> GetInspectionById(int id);
+        Task<int> CreateInspection(Inspection inspection);
+        Task<int> UpdateInspection(Inspection inspection);
+        Task<int> DeleteInspection(int id);
     }
 }

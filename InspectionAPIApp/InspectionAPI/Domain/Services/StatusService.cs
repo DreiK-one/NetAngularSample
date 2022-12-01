@@ -1,6 +1,7 @@
 ﻿using InspectionAPI.Core.Interfaces;
 using InspectionAPI.Core.Interfaces.Data;
 using InspectionAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace InspectionAPI.Domain.Services
 {
@@ -13,35 +14,90 @@ namespace InspectionAPI.Domain.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Status GetStatusById(int id)
+        public async Task<Status> GetStatusById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.Statuses.GetById(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<Status> GetStatuses()
+        public async Task<IEnumerable<Status>> GetStatuses()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.Statuses.GetAll().ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Status CreateStatus(Status status)
+        public async Task<int> CreateStatus(Status status)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (status != null)
+                {
+                    await _unitOfWork.Statuses.Add(status);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public Status UpdateStatus(Status status)
+        public async Task<int> UpdateStatus(Status status)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (status != null)
+                {
+                    await _unitOfWork.Statuses.Update(status);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public int DeleteStatus(int id)
+        public async Task<int> DeleteStatus(int id)
         {
-            throw new NotImplementedException();
-        }
+            try
+            {
+                var status = await _unitOfWork.Statuses.GetById(id);
 
-
-        private bool StatusExists(int id)
-        {
-            throw new NotImplementedException();
+                if (status != null)
+                {
+                    await _unitOfWork.Statuses.Remove(status.Id);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

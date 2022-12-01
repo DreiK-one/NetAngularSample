@@ -1,6 +1,7 @@
 ﻿using InspectionAPI.Core.Interfaces;
 using InspectionAPI.Core.Interfaces.Data;
 using InspectionAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace InspectionAPI.Domain.Services
 {
@@ -13,34 +14,90 @@ namespace InspectionAPI.Domain.Services
             _unitOfWork = unitOfWork;
         }
 
-        public Inspection GetInspectionById(int id)
+        public async Task<Inspection> GetInspectionById(int id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.Inspections.GetById(id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public IEnumerable<Inspection> GetInspections()
+        public async Task<IEnumerable<Inspection>> GetInspections()
         {
-            throw new NotImplementedException();
-        }
-        public Inspection CreateInspection(Inspection inspection)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Inspection UpdateInspection(Inspection inspection)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                return await _unitOfWork.Inspections.GetAll().ToListAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public int DeleteInspection(int id)
+        public async Task<int> CreateInspection(Inspection inspection)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (inspection != null)
+                {
+                    await _unitOfWork.Inspections.Add(inspection);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-
-        private bool InspectionExists(int id)
+        public async Task<int> UpdateInspection(Inspection inspection)
         {
-            throw new NotImplementedException();
-        } 
+            try
+            {
+                if (inspection != null)
+                {
+                    await _unitOfWork.Inspections.Update(inspection);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<int> DeleteInspection(int id)
+        {
+            try
+            {
+                var status = await _unitOfWork.Inspections.GetById(id);
+
+                if (status != null)
+                {
+                    await _unitOfWork.Inspections.Remove(status.Id);
+                    return await _unitOfWork.Save();
+                }
+                else
+                {
+                    throw new NullReferenceException();
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }  
     }
 }

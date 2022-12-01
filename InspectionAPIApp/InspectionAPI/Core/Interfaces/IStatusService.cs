@@ -5,10 +5,10 @@ namespace InspectionAPI.Core.Interfaces
 {
     public interface IStatusService
     {
-        IEnumerable<Status> GetStatuses();
-        Status GetStatusById(int id);
-        Status CreateStatus(Status status);
-        Status UpdateStatus(Status status);
-        int DeleteStatus(int id);
+        Task<IEnumerable<Status>> GetStatuses();
+        Task<Status> GetStatusById(int id);
+        Task<int> CreateStatus(Status status);
+        Task<int> UpdateStatus(Status status);
+        Task<int> DeleteStatus(int id);
     }
 }
