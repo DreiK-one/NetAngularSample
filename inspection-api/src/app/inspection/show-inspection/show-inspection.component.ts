@@ -62,7 +62,7 @@ export class ShowInspectionComponent implements OnInit {
     }
 
     delete(item: Inspection){
-      if (confirm(`Are you sure you watn to delete inspection ${item.id}?`)) {
+      if (confirm(`Are you sure you want to delete inspection ${item.id}?`)) {
         this.inspectionService.deleteInspection(<number>item.id).subscribe(() =>{
           let closeModalBtn = document.getElementById('add-edit-close-modal');
             if(closeModalBtn)
